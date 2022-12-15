@@ -8,5 +8,10 @@ setup(
                 ''',
     author_email='aronian.m@gmail.com',
     author='Michael Aronian',
-    packages=find_packages()
+    packages=find_packages(),
+    install_requires=[
+        'pandas==1.5.2',
+        'SQLAlchemy==1.4.45',
+        'mysqlclient==2.1.1'
+    ]
 )
