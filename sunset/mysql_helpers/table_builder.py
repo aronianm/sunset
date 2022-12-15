@@ -20,7 +20,7 @@ def lookup(tp, lookups):
     return None
 
 
-class JEN23():
+class TwentyThree():
     def __init__(self, table_name, cx) -> None:
         self.table_name = table_name
         self.class_name = self.camel_name()
