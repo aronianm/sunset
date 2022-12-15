@@ -3,7 +3,7 @@ import pandas as pd
 from abc import ABC, abstractmethod
 import logging
 from sunset.sunset import Sunset
-from sunset.mysql_helpers import JEN23
+from sunset.mysql_helpers import TwentyThree
 from sunset.bright_moon import BrightMoon
 
 
@@ -57,7 +57,7 @@ class SunRise(ABC):
         pass
     
     def __build_sqltable__(self, cx):
-        self.table = JEN23(self.table_name, cx).build()
+        self.table = TwentyThree(self.table_name, cx).build()
 
     def _assert_columns_exist(self, cols):
         dataframe_cols = self.df.columns.to_list()
