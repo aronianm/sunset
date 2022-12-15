@@ -1,24 +1,78 @@
-class SunRise():
+from sunset.connector import DBConnection
+import pandas as pd
+from abc import ABC, abstractmethod
+import logging
+from sunset.sunset import Sunset
+from sunset.mysql_helpers import JEN23
+from sunset.bright_moon import BrightMoon
 
-    def __init__(self, df, cx) -> None:
-        self.df = df
-        self.cx = cx
-        self.error = ""
 
-    
-    def implicate(self):
-        self._assert_columns
-        return self.df
+class SunRise(ABC):
+
+    def __init__(self, db_connection):
+        self.db_connection = db_connection
     
 
-    def set_db_cols(self, cols):
-        self.upsert_cols = cols
+    def purport(self):
+        with DBConnection(self.db_connection) as connection:
+            self.__build_sqltable__(connection[1])
+            self.df = self.load_data(connection[1])
+            self._assert_dataframe_exists(self.df)
+            cols = self.selected_columns()
+            self._assert_columns_exist(cols)
+            self.df = self.df.rename(
+                columns=self.rename_columns)
+            if len(self.df) > 0:
+                self.df = self.format_dataframe(self.df)
+                sr = Sunset(self.df, connection[1], self.table)
+                sr.set_db_cols(self.db_columns())
+                updates, appends = sr.create_boat(self.uniq_keys)
+                BrightMoon(updates, appends, connection[0]).imports(self.table, self.uniq_keys)
+                
+            else:
+                print("\N{winking face}")
+                print('\nYour DataFrame is empty.\n')
+
+    @abstractmethod
+    def load_data(self):
+        pass
+
+    @abstractmethod
+    def selected_columns(self):
+        pass
+
+    @abstractmethod
+    def format_dataframe(self):
+        pass
+
+    @abstractmethod
+    def db_columns(self):
+        pass
     
-    @property
-    def _assert_columns(self):
-        df_cols = self.df.columns.to_list()
-        for c in df_cols:
-            if c not in self.upsert_cols:
-                self.error += f"\n Remove column '{c}' from your dataframe or add to db_columns"
-        if len(self.error) > 0:
-            raise EnvironmentError(self.error)
+    def rename_columns(self):
+        return {}
+    
+    @abstractmethod
+    def uniq_keys(self):
+        pass
+    
+    def __build_sqltable__(self, cx):
+        self.table = JEN23(self.table_name, cx).build()
+
+    def _assert_columns_exist(self, cols):
+        dataframe_cols = self.df.columns.to_list()
+        col_error = ""
+        for c in cols:
+            if c not in dataframe_cols:
+                col_error += f"\n Add columns '{c}' to your selected_columns or remove it from your dataframe"
+        if len(col_error) > 0:
+            raise EnvironmentError(col_error)
+        else:
+            self.df = self.df[cols]
+    
+    def _assert_dataframe_exists(self, obj):
+        assert type(obj) == pd.DataFrame, 'Must use pandas \n pip install pandas >= 1.5.2'
+                
+
+
+        

@@ -1,8 +1,13 @@
 setup.py
 sunset/__init__.py
 sunset/connector.py
+sunset/sunburn.py
+sunset/sunrise.py
 sunset/sunset.py
 sunset.egg-info/PKG-INFO
 sunset.egg-info/SOURCES.txt
 sunset.egg-info/dependency_links.txt
+sunset.egg-info/requires.txt
 sunset.egg-info/top_level.txt
+sunset/mysql_helpers/__init__.py
+sunset/mysql_helpers/table_builder.py

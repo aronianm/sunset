@@ -1,11 +1,11 @@
-from sunset.sunset import Sunset
+from sunset.sunrise import SunRise
 import pandas as pd
 
 
 connection = "mysql://root:FLGA--@localhost/pandora"
 
 
-class Foo(Sunset):
+class Foo(SunRise):
     def __init__(self, connection):
         super().__init__(connection)
     
@@ -14,20 +14,22 @@ class Foo(Sunset):
         return 'cities'
 
     def load_data(self, cx):
-        sql = 'select * from cities'
-        df = pd.read_sql(sql, cx)
+        df = pd.read_csv('cities.csv')
         return df
 
     def selected_columns(self):
-        return ['id', 'name', 'state_id']
+        return ['id', 'master_name', 'state_id']
     
     def db_columns(self):
         return ['master_name']
     
     @property
     def rename_columns(self):
-        return {'name': 'master_name'}
+        return {'master_name': 'name'}
 
+    @property
+    def uniq_keys(self):
+        return ['name']
     
     def format_dataframe(self, df):
         return df.drop(columns=['id', 'state_id'])
